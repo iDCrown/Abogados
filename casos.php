@@ -96,7 +96,7 @@
           </div>
         </div>
       </div>
-      
+      <!-- caso -->
       <div class="col background">
         <h2 class="h2_crear">Caso</h2>
         <p class="p_crear" >Ingrese la información del Caso</p>
@@ -107,6 +107,10 @@
               <div class="first mb-3">
                 <label for="expediente" class="form-label">Expediente</label>
                 <input type="number" class="for" name="expediente" id="exampleInputEmail1" aria-describedby="emailHelp" value="<?php echo $expediente; ?>">
+              </div>
+              <div class="first mb-3">
+                <label for="idAbogado" class="form-label">Abogado</label>
+                <input type="number" class="for" name="idAbogado" id="exampleInputEmail1" aria-describedby="emailHelp" value="<?php echo $idAbogado; ?>">
               </div>
             </div>
             <div class="forml1">
@@ -147,6 +151,47 @@
               </div>
             <button type="submit" class="btn-brown warning" name="enviarCaso">Enviar</button>
           </form>
+        </div>
+      </div>
+    </div>
+    <div class="accordion" id="accordionExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            Historial de los Casos
+          </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+            <table class="table table-hover ">
+              <thead class="table-warning table-bordered border-warning">
+                <tr>
+                  <th scope="col">Expediente</th>
+                  <th scope="col">Tipo del caso</th>
+                  <th scope="col">Estado del caso</th>
+                  <th scope="col">Abogados</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="tr-row" style="font-size: smaller">
+                  <td scope="row">
+                    <a href="">
+                    </a>
+                  </td>
+                  <td scope="row"></td>
+                  <td scope="row"></td>
+                  <td scope="row"></td>
+                  <td scope="row"></td>
+                  <td scope="row">
+                  <form method="POST" action="">
+                    <input type="hidden" name="cedula" value="">
+                    <button type="submit" class="btn btn-warning w-50" name="borrar">Borrar</button>
+                  </form>
+                </tr> 
+              </tbody>
+            </table>            
+          </div>
         </div>
       </div>
     </div>
