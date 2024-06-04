@@ -1,99 +1,11 @@
-<?php
-    // Incluimos conexión
-    include 'conexion.php';
-
-    // Obtener el ID del cliente de la URL
-    $idRegistro = $_GET['cedula'];
-// Generar un número de expediente aleatorio
-    $expediente = rand(1000, 9999);
-
-    // Verificar si se ha enviado el formulario de edición
-    if(isset($_POST['editarRegistro'])){
-      //$idRegistro = $_POST['cedula'];
-        // Obtener los datos del formulario
-        $cedula = mysqli_real_escape_string($con, $_POST['cedula']);
-        $nombre = mysqli_real_escape_string($con, $_POST['nombre']);
-        $email = mysqli_real_escape_string($con, $_POST['email']);
-        $telefono = mysqli_real_escape_string($con, $_POST['telefono']);
-        $direccion = mysqli_real_escape_string($con, $_POST['direccion']);
-
-        // Validar si no están vacíos
-        if(!empty($cedula) && !empty($nombre) && !empty($email) && !empty($telefono) && !empty($direccion)){
-            // Actualizar los datos del cliente en la base de datos
-            $query = "UPDATE clientes SET cedula='$cedula', nombre='$nombre', email='$email', telefono='$telefono', direccion='$direccion' WHERE cedula='$cedula'";
-            if(mysqli_query($con, $query)){
-                $mensaje = "Registro editado correctamente";
-                // Recargar los datos del cliente después de la edición
-                $result = mysqli_query($con, "SELECT * FROM clientes WHERE cedula='$cedula'");
-                if(mysqli_num_rows($result) > 0){
-                    $fila = mysqli_fetch_assoc($result);
-                } else {
-                    $error = "Cliente no encontrado";
-                }
-            } else {
-                $error = "Error, no se pudo editar el registro";
-            }
-        } else {
-            $error = "Algunos campos están vacíos";
-        }
-    }
-
-    // Seleccionar datos del cliente
-    $query = "SELECT * FROM clientes WHERE cedula='$idRegistro'";
-    $result = mysqli_query($con, $query);
-    
-    // Verificar si se encontró el cliente
-    if(mysqli_num_rows($result) > 0){
-      
-        $fila = mysqli_fetch_assoc($result);
-    } else {
-        $error = "Cliente no encontrado";
-    }
-
-
-
-    if(isset($_POST['enviarCaso'])){
-      $expediente = mysqli_real_escape_string($con, $_POST['expediente']);
-      $fechaini = mysqli_real_escape_string($con, $_POST['fechaini']);
-      $fechafz = mysqli_real_escape_string($con, $_POST['fechafz']);
-      $tipoCaso = mysqli_real_escape_string($con, $_POST['tipoCaso']);
-      $estado = mysqli_real_escape_string($con, $_POST['estado']);
-      $descripcion = mysqli_real_escape_string($con, $_POST['descripcion']);
-
-      //Configurar tiempo zona horaria
-      date_default_timezone_set('America/Bogota');
-      $time = date('h:i:s a', time());
-
-      //Validar si no están vacíos
-      if(!isset($expediente) || $expediente == '' || !isset($fechaini) || $fechaini == '' || !isset($fechafz) || $fechafz == '' || !isset($tipoCaso) || $tipoCaso == '' || !isset($estado) || $estado == '' || !isset($descripcion) || $descripcion == ''){
-          $error = "Algunos campos están vacíos";
-      }else{
-          $query = "INSERT INTO casos(expediente, fechafz, fechaini, tipoCaso, estado, descripcion)VALUES('$expediente', '$fechafz', '$fechaini', '$tipoCaso', '$estado', '$descripcion')";
-
-          if(!mysqli_query($con, $query)){
-              die('Error: ' . mysqli_error($con));
-              $error = "Error, no se pudo crear el registro";
-          }else{
-              $mensaje = "Registro creado correctamente";
-              header('Location: index.php?mensaje='.urlencode($mensaje));
-              exit();
-          }
-      }
-
-  }
-
-
-
-?>
-
-
+<?php include "casosCon.php";?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CREAR</title>
-    <link rel="stylesheet" href="./casos.css">
+    <link rel="stylesheet" href="./css/casos.css">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -149,7 +61,7 @@
               </div>
               <div class="modal-body">
                 
-                <form class="conteiner-modal" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <form class="conteiner-modal" method="POST" action="<?php echo $_SERVER['PHP_SELF'] . '?cedula=' . $fila['cedula']; ?>">
                   <div class="forml1">
                     <div class="first mb-3">
                       <label for="cedula" class="form-labe">Cedula</label>
@@ -189,7 +101,7 @@
         <h2 class="h2_crear">Caso</h2>
         <p class="p_crear" >Ingrese la información del Caso</p>
         <div style="margin-top: 22px">  
-          <form class="conteiner-form" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+          <form class="conteiner-form" method="POST" action="<?php echo $_SERVER['PHP_SELF'] . '?cedula=' . $fila['cedula']; ?>">
 
             <div class="forml1">
               <div class="first mb-3">
