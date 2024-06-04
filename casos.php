@@ -154,47 +154,6 @@
         </div>
       </div>
     </div>
-    <div class="accordion" id="accordionExample">
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            Historial de los Casos
-          </button>
-        </h2>
-        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-          <div class="accordion-body">
-            <table class="table table-hover ">
-              <thead class="table-warning table-bordered border-warning">
-                <tr>
-                  <th scope="col">Expediente</th>
-                  <th scope="col">Tipo del caso</th>
-                  <th scope="col">Estado del caso</th>
-                  <th scope="col">Abogados</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="tr-row" style="font-size: smaller">
-                  <td scope="row">
-                    <a href="">
-                    </a>
-                  </td>
-                  <td scope="row"></td>
-                  <td scope="row"></td>
-                  <td scope="row"></td>
-                  <td scope="row"></td>
-                  <td scope="row">
-                  <form method="POST" action="">
-                    <input type="hidden" name="cedula" value="">
-                    <button type="submit" class="btn btn-warning w-50" name="borrar">Borrar</button>
-                  </form>
-                </tr> 
-              </tbody>
-            </table>            
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
 </body>
