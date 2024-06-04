@@ -41,38 +41,25 @@
         }
     }
 
-    // ABOGADOS
-    if(isset($_POST['enviarAbogado'])){
-      $idAbogado = mysqli_real_escape_string($con, $_POST['idAbogado']);
-      $nombre = mysqli_real_escape_string($con, $_POST['nombre']);
-      $email = mysqli_real_escape_string($con, $_POST['email']);
-      $telefono = mysqli_real_escape_string($con, $_POST['telefono']);
-      $direccion = mysqli_real_escape_string($con, $_POST['direccion']);
-      $direccion = mysqli_real_escape_string($con, $_POST['direccion']);
+    // Abogados
+    $query = "SELECT * FROM abogado ORDER BY idAbogado DESC";
+    $abogados = mysqli_query($con, $query);
 
+    if(isset($_POST['borrar'])){        
+    $id = $_POST['idAbogado'];
+    //Validar si no están vacíos
+    $query = "DELETE FROM abogado where idAbogado='$id'";
 
-      //Configurar tiempo zona horaria
-      date_default_timezone_set('America/Bogota');
-      $time = date('h:i:s a', time());
-
-      //Validar si no están vacíos
-      if(!isset($idAbogado) || $idAbogado == '' || !isset($nombre) || $nombre == '' || !isset($telefono) || $telefono == '' || !isset($email) || $email == '' || !isset($direccion) || $direccion == ''){
-          $error = "Algunos campos están vacíos";
-      }else{
-          $query = "INSERT INTO abogados(idAbogado, nombre, email, telefono, direccion)VALUES('$idAbogado', '$nombre', '$email', '$telefono', '$direccion')";
-
-          if(!mysqli_query($con, $query)){
-              die('Error: ' . mysqli_error($con));
-              $error = "Error, no se pudo crear el registro";
-          }else{
-              $mensaje = "Registro creado correctamente";
-              header('Location: index.php?mensaje='.urlencode($mensaje));
-              exit();
-          }
-      }
-
-  }
-
+    if(!mysqli_query($con, $query)){
+    
+    die('Error: ' . mysqli_error($con));
+    $error = "Error, no se pudo crear el registros";
+    }else{
+    $mensaje = "Registro borrado correctamente";
+    header('Location: index.php?mensaje='.urlencode($mensaje));
+    exit();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,7 +79,7 @@
       <a class="nav-link"style="border: none; color: #ffc108; font-variant-caps: all-petite-caps; font-weight: 900; letter-spacing: 1px;" href="#" onclick="mostrarTabla('casos')">Historial de casos</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link"style="border: none; color: #ffc108; font-variant-caps: all-petite-caps; font-weight: 900; letter-spacing: 1px;" href="#" onclick="mostrarTabla('abogado')">Crear Abogado</a>
+      <a class="nav-link"style="border: none; color: #ffc108; font-variant-caps: all-petite-caps; font-weight: 900; letter-spacing: 1px;" href="#" onclick="mostrarTabla('abogado')">Abogados</a>
     </li>
   </ul>
   <div class="conteiner">
@@ -170,40 +157,47 @@
         </table>
       </div>
 
-      <!-- Crear Abogado -->
-      <div style="display: flex; justify-content: center;">
-        <div class="abogado" id="abogado" style="display:none;">
-          <h2 class="h2_crear">Abogado</h2>
-          <p class="p_crear" >Ingrese la información del Abogado</p>
-          <div style="margin-top: 22px">  
-            <form class="conteiner-form" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-              <div class="forml1">
-                <div class="first mb-3">
-                  <label for="cedula" class="form-label">Cedula</label>
-                  <input type="number" class="for" name="idAbogado" id="exampleInputEmail1" aria-describedby="emailHelp">
-                </div>
-                <div class="first mb-3">
-                  <label for="nombre" class="form-label">Nombre Completo</label>
-                  <input type="text" class=" for" name="nombre" id="exampleInputPassword1">
-                </div>
-              </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Correo Electronico</label>
-                <input type="email" class="for b1" name="email" id="exampleInputPassword1">
-              </div>
-              <div class="mb-3">
-                <label for="telefono" class="form-label">Numero Telefonico</label>
-                <input type="number" class="for b2" name="telefono" id="exampleInputPassword1">
-              </div>
-                <div class="mb-3">
-                  <label for="direccion" class="form-label">Dirección</label>
-                  <input type="text" class="for b3" name="direccion" id="exampleInputPassword1">
-                </div>
-                
-              <button type="submit" class="btn-brown" name="enviarAbogado">Enviar</button>
-            </form>
-          </div>
+      <div id="abogado"  style="display: none;">
+      
+        <!-- Boton Crear  -->
+        <div class="boton">
+          <a href="abogado.php" class=""> 
+            <button type="button" class=" btn btn-outline-warning">Crear Abogado</button>
+          </a>
         </div>
+          <!-- tabla Abogados -->
+        <table class="table table-hover ">
+          <thead class="table-warning table-bordered border-warning">
+            <tr>
+              <th scope="col">Cedula</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Correo</th>
+              <th scope="col">Telefono</th>
+              <th scope="col">Direccion</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php while ( $fila = mysqli_fetch_assoc($abogados)) : ?>
+            <tr class="tr-row" style="font-size: smaller">
+              <td scope="row">
+                <a href="">
+                  <?php echo $fila['idAbogado']; ?>
+                </a>
+              </td>
+              <td scope="row"><?php echo $fila['nombre']; ?></td>
+              <td scope="row"><?php echo $fila['email']; ?></td>
+              <td scope="row"><?php echo $fila['telefono']; ?></td>
+              <td scope="row"><?php echo $fila['direccion']; ?></td>
+              <td scope="row">
+              <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <input type="hidden" name="idAbogado" value="<?php echo $fila['idAbogado']; ?>">
+                <button type="submit" class="btn btn-warning w-100" name="borrar">Borrar</button>
+              </form>
+            </tr> 
+            <?php endwhile; ?>
+          </tbody>
+        </table>
       </div>
     </div>  
   </div>
