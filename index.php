@@ -250,7 +250,7 @@ if (isset($_GET['cedula'])) {
           <div class="modal-content">
             <div class="modalFactura-header">
               <div>
-                <h1 class="modalFactura-title" id="exampleModalLabel">Caso #</h1><span id="expediente"></span>
+                <h1 class="modalFactura-title" id="exampleModalLabel">Caso # </h1><span id="expediente"></span>
               </div>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
