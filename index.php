@@ -32,6 +32,8 @@
       $stmt->bind_param("i", $idRegistro);
       $stmt->execute();
       $result = $stmt->get_result();
+
+      
         if($result->num_rows>0){
         
           die('Error: ' . mysqli_error($con));

@@ -18,7 +18,7 @@ include "./config/conexion.php";
     if(!isset($idAbogado) || $idAbogado == '' || !isset($nombre) || $nombre == '' || !isset($telefono) || $telefono == '' || !isset($email) || $email == '' || !isset($direccion) || $direccion == ''){
         $error = "Algunos campos están vacíos";
     }else{
-        $query = "INSERT INTO abogados(idAbogado, nombre, email, telefono, direccion)VALUES('$idAbogado', '$nombre', '$email', '$telefono', '$direccion')";
+        $query = "INSERT INTO abogado(idAbogado, nombre, email, telefono, direccion)VALUES('$idAbogado', '$nombre', '$email', '$telefono', '$direccion')";
 
         if(!mysqli_query($con, $query)){
             die('Error: ' . mysqli_error($con));
