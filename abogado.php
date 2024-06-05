@@ -18,7 +18,7 @@ include "./config/conexion.php";
     if(!isset($idAbogado) || $idAbogado == '' || !isset($nombre) || $nombre == '' || !isset($telefono) || $telefono == '' || !isset($email) || $email == '' || !isset($direccion) || $direccion == ''){
         $error = "Algunos campos están vacíos";
     }else{
-        $query = "INSERT INTO abogado(idAbogado, nombre, email, telefono, direccion)VALUES('$idAbogado', '$nombre', '$email', '$telefono', '$direccion')";
+        $query = "INSERT INTO abogados(idAbogado, nombre, email, telefono, direccion)VALUES('$idAbogado', '$nombre', '$email', '$telefono', '$direccion')";
 
         if(!mysqli_query($con, $query)){
             die('Error: ' . mysqli_error($con));
@@ -40,43 +40,41 @@ include "./config/conexion.php";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
-    <div class="conteiner">
-        <div class="content">
-<div style="display: flex; justify-content: center;">
+  <div class="conteiner">
+    <div class="content">
+      <div style="display: flex; justify-content: center;">
         <div class="abogado"  style="">
-    <h2 class="h2_crear">Abogado</h2>
-    <p class="p_crear" >Ingrese la información del Abogado</p>
-    <div style="margin-top: 22px">  
-            <form class="conteiner-form" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-        <div class="forml1">
-                <div class="first mb-3">
-            <label for="cedula" class="form-label">Cedula</label>
-            <input type="number" class="for" name="idAbogado" id="exampleInputEmail1" aria-describedby="emailHelp">
-                </div>
-                <div class="first mb-3">
-            <label for="nombre" class="form-label">Nombre Completo</label>
-            <input type="text" class=" for" name="nombre" id="exampleInputPassword1">
-                </div>
+          <h2 class="h2_crear">Abogado</h2>
+          <p class="p_crear" >Ingrese la información del Abogado</p>
+          <div style="margin-top: 22px">  
+          <form class="conteiner-form" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+            <div class="forml1">
+              <div class="first mb-3">
+                <label for="cedula" class="form-label">Cedula</label>
+                <input type="number" class="for" name="idAbogado" id="exampleInputEmail1" aria-describedby="emailHelp">
+              </div>
+              <div class="first mb-3">
+                <label for="nombre" class="form-label">Nombre Completo</label>
+                <input type="text" class=" for" name="nombre" id="exampleInputPassword1">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo Electronico</label>
+              <input type="email" class="for b1" name="email" id="exampleInputPassword1">
+            </div>
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Numero Telefonico</label>
+              <input type="number" class="for b2" name="telefono" id="exampleInputPassword1">
+            </div>
+            <div class="mb-3">
+              <label for="direccion" class="form-label">Dirección</label>
+              <input type="text" class="for b3" name="direccion" id="exampleInputPassword1">
+            </div>    
+            <button type="submit" class="btn-brown" name="enviarAbogado">Enviar</button>
+          </form>
         </div>
-        <div class="mb-3">
-                <label for="email" class="form-label">Correo Electronico</label>
-                <input type="email" class="for b1" name="email" id="exampleInputPassword1">
-        </div>
-        <div class="mb-3">
-                <label for="telefono" class="form-label">Numero Telefonico</label>
-                <input type="number" class="for b2" name="telefono" id="exampleInputPassword1">
-        </div>
-                <div class="mb-3">
-            <label for="direccion" class="form-label">Dirección</label>
-            <input type="text" class="for b3" name="direccion" id="exampleInputPassword1">
-                </div>
-                
-        <button type="submit" class="btn-brown" name="enviarAbogado">Enviar</button>
-            </form>
+      </div>
     </div>
-        </div>
-        </div>
-    </div>
-</div>
+  </div>
 </body>
 </html>
