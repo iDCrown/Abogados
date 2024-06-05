@@ -20,9 +20,6 @@
         }
     }
 
-    // Casos 
-    $query = "SELECT * FROM casos ORDER BY expediente DESC";
-    $casos = mysqli_query($con, $query);
 
     if(isset($_POST['borrarCaso'])){        
 
@@ -40,7 +37,6 @@
           exit();
         }
     }
-
     // Abogados
     $query = "SELECT * FROM abogado ORDER BY idAbogado DESC";
     $abogados = mysqli_query($con, $query);
@@ -49,6 +45,50 @@
     $id = $_POST['idAbogado'];
     //Validar si no están vacíos
     $query = "DELETE FROM abogado where idAbogado='$id'";
+
+          if(!mysqli_query($con, $query)){
+              die('Error: ' . mysqli_error($con));
+              $error = "Error, no se pudo crear el registro";
+          }else{
+              $mensaje = "Registro creado correctamente";
+              header('Location: index.php?mensaje='.urlencode($mensaje));
+              exit();
+          }
+      }
+
+  
+
+  // HISTORIAL DE CASOS
+ // Casos
+$result = null;
+
+if (isset($_GET['cedula'])) {
+    $idCedula = $_GET['cedula'];
+
+    $query_historialCaso = "SELECT 
+    a.nombre AS nombreAbogado, 
+    cs.expediente, 
+    cs.fechaini, 
+    cs.tipoCaso, 
+    cs.estado 
+    FROM casos cs 
+    JOIN caso_abogado ca 
+    ON ca.expediente = cs.expediente 
+    JOIN abogados a 
+    ON ca.idAbogado = a.idAbogado 
+    JOIN clientes cl 
+    ON cs.cedula = cl.cedula 
+    WHERE cs.cedula = ?
+    GROUP BY cs.expediente, a.nombre, cs.tipoCaso, cs.estado ";
+    // Preparar la declaración
+    $stmt = $con->prepare($query_historialCaso);
+    // Vincular los parámetros
+    $stmt->bind_param('i', $idCedula); // 's' indica que el parámetro es de tipo string
+    // Ejecutar la declaración
+    $stmt->execute();
+    // Obtener los resultados
+    $result = $stmt->get_result();
+}
 
     if(!mysqli_query($con, $query)){
     
@@ -59,7 +99,7 @@
     header('Location: index.php?mensaje='.urlencode($mensaje));
     exit();
     }
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,7 +132,6 @@
             <button type="button" class=" btn btn-outline-warning">Crear Cliente</button>
           </a>
         </div>
-
         <table class="table table-hover ">
           <thead class="table-warning table-bordered border-warning">
             <tr>
@@ -128,28 +167,89 @@
       </div>
       <!-- tabla casos -->
       <div id="casos" style="display:none;">
+      <div class="boton">
+          <a href="crearCliente copy.php" class=""> 
+            <button type="button" class=" btn btn-outline-warning">Crear Cliente</button>
+          </a>
+        </div>
+        <form class="consultar" action="" method="GET">
+        <p  style="color:black" class="p_crear">Ingrese el ID del cliente</p>
+          <input class="input" type="text" name="cedula">
+          <button type="submit" class="button" name="consultar">buscar</button>
+        </form>
         <table class="table table-hover ">
           <thead class="table-warning table-bordered border-warning">
             <tr>
-              <th scope="col">expediente</th>
-              <th scope="col">fechaini</th>
-              <th scope="col">fechafz</th>
-              <th scope="col">tipoCaso</th>
-              <th scope="col">estado</th>
+              <th scope="col">Expediente</th>
+              <th scope="col">Fecha de inicio</th>
+              <th scope="col">TipoCaso</th>
+              <th scope="col">Estado</th>
               <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
-          <?php while ( $fila = mysqli_fetch_assoc($casos)) : ?>
-              <td scope="row"><?php echo $fila['expediente']; ?></td>
-              <td scope="row"><?php echo $fila['fechaini']; ?></td>
-              <td scope="row"><?php echo $fila['fechafz']; ?></td>
-              <td scope="row"><?php echo $fila['tipoCaso']; ?></td>
-              <td scope="row"><?php echo $fila['estado']; ?></td>
+          <?php if ($result): ?>
+            <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+              <tr class="tr-row" style="font-size: smaller">
+                <td scope="row"><?php echo $row['expediente']; ?></td>
+                  <td scope="row"><?php echo $row['fechaini']; ?></td>
+                  <td scope="row"><?php echo $row['tipoCaso']; ?></td>
+                  <td scope="row"><?php echo $row['estado']; ?></td>
+                  <td scope="row">
+                  <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                    <input type="hidden" name="expediente" value="<?php echo $fila['expediente']; ?>">
+                    <button type="submit" class="btn btn-warning w-100" name="borrarCaso">Borrar</button>
+
+                    <input type="hidden" name="expediente" value="<?php echo $fila['expediente']; ?>">
+                    <button type="submit" class="btn btn-warning w-100" name="borrarCaso">er</button>
+                  </form>
+              </tr> 
+            <?php endwhile; ?>
+            <?php else: ?>
+              <tr>
+                <td colspan="5">No se encontraron registros.</td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="abogado"  style="display: none;">
+      
+        <!-- Boton Crear  -->
+        <div class="boton">
+          <a href="abogado.php" class=""> 
+            <button type="button" class=" btn btn-outline-warning">Crear Abogado</button>
+          </a>
+        </div>
+          <!-- tabla Abogados -->
+        <table class="table table-hover ">
+          <thead class="table-warning table-bordered border-warning">
+            <tr>
+              <th scope="col">Cedula</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Correo</th>
+              <th scope="col">Telefono</th>
+              <th scope="col">Direccion</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php while ( $fila = mysqli_fetch_assoc($abogados)) : ?>
+            <tr class="tr-row" style="font-size: smaller">
+              <td scope="row">
+                <a href="">
+                  <?php echo $fila['idAbogado']; ?>
+                </a>
+              </td>
+              <td scope="row"><?php echo $fila['nombre']; ?></td>
+              <td scope="row"><?php echo $fila['email']; ?></td>
+              <td scope="row"><?php echo $fila['telefono']; ?></td>
+              <td scope="row"><?php echo $fila['direccion']; ?></td>
               <td scope="row">
               <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <input type="hidden" name="expediente" value="<?php echo $fila['expediente']; ?>">
-                <button type="submit" class="btn btn-warning w-100" name="borrarCaso">Borrar</button>
+                <input type="hidden" name="idAbogado" value="<?php echo $fila['idAbogado']; ?>">
+                <button type="submit" class="btn btn-warning w-100" name="borrar">Borrar</button>
               </form>
             </tr> 
             <?php endwhile; ?>
