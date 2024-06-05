@@ -163,22 +163,22 @@ if (isset($_GET['cedula'])) {
       </div>
       <!-- tabla casos -->
       <div id="casos" style="display:none;">
-          <form class="consultar" action="" method="GET">
-          <p  style="color:black" class="p_crear">Ingrese el ID del cliente</p>
-            <input class="input" type="text" name="cedula">
-            <button type="submit" class="button" name="consultar">buscar</button>
-          </form>
-          <table class="table table-hover ">
-            <thead class="table-warning table-bordered border-warning">
-              <tr>
-                <th scope="col">Expediente</th>
-                <th scope="col">Fecha de inicio</th>
-                <th scope="col">TipoCaso</th>
-                <th scope="col">Estado</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
+        <form class="consultar" action="" method="GET">
+        <p  style="color:black" class="p_crear">Ingrese el ID del cliente</p>
+          <input class="input" type="text" name="cedula">
+          <button type="submit" class="button" name="consultar">buscar</button>
+        </form>
+        <table class="table table-hover ">
+          <thead class="table-warning table-bordered border-warning">
+            <tr>
+              <th scope="col">Expediente</th>
+              <th scope="col">Fecha de inicio</th>
+              <th scope="col">TipoCaso</th>
+              <th scope="col">Estado</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
             <?php if ($result): ?>
               <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                 <tr class="tr-row" style="font-size: smaller">
@@ -188,13 +188,9 @@ if (isset($_GET['cedula'])) {
                     <td scope="row"><?php echo $row['estado']; ?></td>
                     <td scope="row">
                     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-
-                    <input type="hidden" name="expediente" value="<?php echo $row['expediente']; ?>">
-                    <button type="submit" class="btn btn-warning w-100" name="borrarCaso">Borrar</button>
-
+                      <input type="hidden" name="expediente" value="<?php echo $row['expediente']; ?>">
+                      <button type="submit" class="btn btn-warning w-100" name="borrarCaso">Borrar</button>
                       <button type="button" class="btnVer btn btn-warning w-100" data-expediente="<?php echo $row['expediente']; ?>" onclick="verCaso(this)" data-bs-toggle="modal" data-bs-target="#myModal">Ver</button>
-
-
                     </form>
                 </tr> 
               <?php endwhile; ?>
@@ -203,9 +199,9 @@ if (isset($_GET['cedula'])) {
                   <td colspan="5">No se encontraron registros.</td>
                 </tr>
               <?php endif; ?>
-            </tbody>
-          </table>
-        </div>          
+          </tbody>
+        </table>
+      </div>          
       <!-- Abogado -->
       <div id="abogado"  style="display: none;">
         <!-- Boton Crear  -->
