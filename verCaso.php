@@ -19,7 +19,7 @@ if (isset($_POST['expediente_ex'])) {
         cl.telefono
     FROM casos cs 
     JOIN caso_abogado ca ON ca.expediente = cs.expediente 
-    JOIN abogados a ON ca.idAbogado = a.idAbogado 
+    JOIN abogado a ON ca.idAbogado = a.idAbogado 
     JOIN clientes cl ON cs.cedula = cl.cedula 
     WHERE cs.expediente = ?";
 
@@ -36,6 +36,7 @@ if (isset($_POST['expediente_ex'])) {
 
         // Crea un array asociativo con los datos obtenidos
         $Vabogado = [
+            'expediente' => $row['expediente'],
             'nombreAbogado' => $row['nombreAbogado'],
             'tipoCaso' => $row['tipoCaso'],
             'fechaini' => $row['fechaini'],
@@ -53,8 +54,5 @@ if (isset($_POST['expediente_ex'])) {
         // No se encontraron resultados
         echo json_encode(['error' => 'No se encontraron resultados para el expediente proporcionado']);
     }
-} else {
-    // No se recibió el expediente_ex
-    echo json_encode(['error' => 'No se recibió el expediente_ex']);
 }
 ?>

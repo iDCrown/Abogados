@@ -43,7 +43,7 @@
         }
     }
     // Abogados
-    $query = "SELECT * FROM abogados ORDER BY idAbogado DESC";
+    $query = "SELECT * FROM abogado ORDER BY idAbogado DESC";
     $abogados = mysqli_query($con, $query);
 
     if(isset($_POST['borrarAbogado'])){        
@@ -163,11 +163,6 @@ if (isset($_GET['cedula'])) {
       </div>
       <!-- tabla casos -->
       <div id="casos" style="display:none;">
-        <div class="boton">
-            <a href="crearCliente.php" class=""> 
-              <button type="button" class=" btn btn-outline-warning">Crear Cliente</button>
-            </a>
-          </div>
           <form class="consultar" action="" method="GET">
           <p  style="color:black" class="p_crear">Ingrese el ID del cliente</p>
             <input class="input" type="text" name="cedula">
@@ -193,8 +188,11 @@ if (isset($_GET['cedula'])) {
                     <td scope="row"><?php echo $row['estado']; ?></td>
                     <td scope="row">
                     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                      
-                      <button type="button" class="btnVer btn btn-warning w-100" data-expediente="<?php echo $row['expediente']; ?>" data-bs-toggle="modal" data-bs-target="#myModal">Ver</button>
+
+                    <input type="hidden" name="expediente" value="<?php echo $row['expediente']; ?>">
+                    <button type="submit" class="btn btn-warning w-100" name="borrarCaso">Borrar</button>
+
+                      <button type="button" class="btnVer btn btn-warning w-100" data-expediente="<?php echo $row['expediente']; ?>" onclick="verCaso(this)" data-bs-toggle="modal" data-bs-target="#myModal">Ver</button>
 
 
                     </form>
@@ -207,8 +205,7 @@ if (isset($_GET['cedula'])) {
               <?php endif; ?>
             </tbody>
           </table>
-        </div>
-      </div>            
+        </div>          
       <!-- Abogado -->
       <div id="abogado"  style="display: none;">
         <!-- Boton Crear  -->
@@ -248,11 +245,6 @@ if (isset($_GET['cedula'])) {
               </form>
             </tr> 
             <?php endwhile; ?>
-          </tbody>
-        </table>
-      </div>
-
-
           </tbody>
         </table>
       </div>
@@ -310,63 +302,44 @@ if (isset($_GET['cedula'])) {
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  
   <script>
-   document.addEventListener("DOMContentLoaded", function() {
-    const caseLinks = document.querySelectorAll(".case-link");
+  function verCaso(button) {
+    const expediente = button.getAttribute('data-expediente');
 
-    caseLinks.forEach(function(link) {
-        link.addEventListener("click", function(event) {
-            event.preventDefault();
-
-            const expediente = this.getAttribute("data-expediente");
-
-            // Verificar si el expediente existe antes de hacer la solicitud
-            if (expediente) {
-                fetch('verCaso.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ expediente_ex: expediente })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('La solicitud HTTP falló');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Mostrar los datos del caso en el modal
-                    mostrarDatosCaso(data);
-                })
-                .catch(error => console.error('Error:', error));
-            } else {
-                console.error('El atributo "data-expediente" no está presente en el enlace');
-            }
-        });
+    // Realizar una solicitud AJAX a verCasos.php
+    fetch('verCaso.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'expediente_ex=' + expediente
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        alert(data.error);
+      } else {
+        // Poblar el modal con los datos recibidos
+        document.getElementById('expediente').innerText = data.expediente;
+        document.getElementById('expediente_ex').innerText = data.expediente;
+        document.getElementById('tipoCaso').innerText = data.tipoCaso;
+        document.getElementById('fechaini').innerText = data.fechaini;
+        document.getElementById('fechafz').innerText = data.fechafz;
+        document.getElementById('nombre').innerText = data.nombre;
+        document.getElementById('nombreAbogado').innerText = data.nombreAbogado;
+        document.getElementById('email').innerText = data.email;
+        document.getElementById('telefono').innerText = data.telefono;
+        document.getElementById('estado').innerText = data.estado;
+        document.getElementById('cedula').innerText = data.cedula;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
     });
-});
-
-// Función para mostrar los datos del caso en el modal
-function mostrarDatosCaso(data) {
-    document.getElementById("expediente_ex").innerText = data.expediente;
-    document.getElementById("tipoCaso").innerText = data.tipoCaso;
-    document.getElementById("fechaini").innerText = data.fechaini;
-    document.getElementById("fechafz").innerText = data.fechafz;
-    document.getElementById("nombre").innerText = data.nombre;
-    document.getElementById("nombreAbogado").innerText = data.nombreAbogado;
-    document.getElementById("email").innerText = data.email;
-    document.getElementById("telefono").innerText = data.telefono;
-    document.getElementById("estado").innerText = data.estado;
-
-    // Mostrar el modal
-    const modal = new bootstrap.Modal(document.getElementById("myModal"));
-    modal.show();
-}
-
-
-  </script>
+  }
+</script>
 
   <script>
     function mostrarTabla(tabla) {
