@@ -7,7 +7,8 @@ include "./config/conexion.php";
     $email = mysqli_real_escape_string($con, $_POST['email']);
     $telefono = mysqli_real_escape_string($con, $_POST['telefono']);
     $direccion = mysqli_real_escape_string($con, $_POST['direccion']);
-    $direccion = mysqli_real_escape_string($con, $_POST['direccion']);
+    $salario = mysqli_real_escape_string($con, $_POST['salario']);
+ 
 
 
       //Configurar tiempo zona horaria
@@ -15,10 +16,10 @@ include "./config/conexion.php";
     $time = date('h:i:s a', time());
 
       //Validar si no están vacíos
-    if(!isset($idAbogado) || $idAbogado == '' || !isset($nombre) || $nombre == '' || !isset($telefono) || $telefono == '' || !isset($email) || $email == '' || !isset($direccion) || $direccion == ''){
+    if(!isset($idAbogado) || $idAbogado == '' || !isset($nombre) || $nombre == '' || !isset($telefono) || $telefono == '' || !isset($email) || $email == '' || !isset($direccion) || $direccion == '' || !isset($salario) || $salario == ''){
         $error = "Algunos campos están vacíos";
     }else{
-        $query = "INSERT INTO abogados(idAbogado, nombre, email, telefono, direccion)VALUES('$idAbogado', '$nombre', '$email', '$telefono', '$direccion')";
+        $query = "INSERT INTO abogado(idAbogado, nombre, email, telefono, direccion,salario)VALUES('$idAbogado', '$nombre', '$email', '$telefono', '$direccion', ' $salario')";
 
         if(!mysqli_query($con, $query)){
             die('Error: ' . mysqli_error($con));
@@ -51,25 +52,31 @@ include "./config/conexion.php";
             <div class="forml1">
               <div class="first mb-3">
                 <label for="cedula" class="form-label">Cedula</label>
-                <input type="number" class="for" name="idAbogado" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <input type="number" class="for  b1" name="idAbogado" id="exampleInputEmail1" aria-describedby="emailHelp">
               </div>
               <div class="first mb-3">
                 <label for="nombre" class="form-label">Nombre Completo</label>
-                <input type="text" class=" for" name="nombre" id="exampleInputPassword1">
+                <input type="text" class=" for  b1" name="nombre" id="exampleInputPassword1">
               </div>
             </div>
             <div class="mb-3">
               <label for="email" class="form-label">Correo Electronico</label>
-              <input type="email" class="for b1" name="email" id="exampleInputPassword1">
+              <input type="email" class="for b2" name="email" id="exampleInputPassword1">
             </div>
             <div class="mb-3">
               <label for="telefono" class="form-label">Numero Telefonico</label>
               <input type="number" class="for b2" name="telefono" id="exampleInputPassword1">
             </div>
-            <div class="mb-3">
-              <label for="direccion" class="form-label">Dirección</label>
-              <input type="text" class="for b3" name="direccion" id="exampleInputPassword1">
-            </div>    
+            <div class="forml1">
+              <div class="first mb-3">
+                <label for="direccion" class="form-label">Dirección</label>
+                <input type="text" class="for b3" name="direccion" id="exampleInputPassword1">
+              </div>  
+              <div class="first mb-3">
+                <label for="salario" class="form-label">salario</label>
+                <input type="text" class="for b3" name="salario" id="exampleInputPassword1">
+              </div>  
+            </div>  
             <button type="submit" class="btn-brown" name="enviarAbogado">Enviar</button>
           </form>
         </div>

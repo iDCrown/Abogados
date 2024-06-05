@@ -23,7 +23,6 @@
 
 
     if(isset($_POST['borrarCaso'])){        
-
       $idRegistro = $_POST['expediente'];
       //Validar si no están vacíos
       $query = "DELETE FROM casos WHERE expediente= ?";
@@ -186,9 +185,7 @@ if (isset($_GET['cedula'])) {
           <?php while ( $fila = mysqli_fetch_assoc($abogados)) : ?>
             <tr class="tr-row" style="font-size: smaller">
               <td scope="row">
-                <a href="">
-                  <?php echo $fila['idAbogado']; ?>
-                </a>
+                <?php echo $fila['idAbogado']; ?>
               </td>
               <td scope="row"><?php echo $fila['nombre']; ?></td>
               <td scope="row"><?php echo $fila['email']; ?></td>
@@ -234,6 +231,7 @@ if (isset($_GET['cedula'])) {
                     <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                       <div class="forml1">
                         <button type="button" style="margin-right: 9px;" class="btnVer btn btn-warning w-100" data-expediente="<?php echo $row['expediente']; ?>" onclick="verCaso(this)" data-bs-toggle="modal" data-bs-target="#myModal">Ver</button>
+
                         <input type="hidden" name="expediente" value="<?php echo $row['expediente']; ?>">
                         <button type="submit" class="btn btn-warning w-100" name="borrarCaso">Borrar</button>
                       </div>
@@ -292,8 +290,8 @@ if (isset($_GET['cedula'])) {
                 <tr>
                   <th scope="col">Expediente</th>
                   <th scope="col">Tipo de Caso</th>
-                  <th scope="col">Estado</th>
                   <th scope="col">Nombre del Abogado</th>
+                  <th scope="col">Estado</th>
                 </tr>
               </thead>
               <tbody class="table-group-divider">

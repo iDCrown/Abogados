@@ -62,6 +62,7 @@
   // Verificar si se ha enviado el formulario de creación de caso
     if (isset($_POST['enviarCaso'])) {
     echo'cedula'. $idRegistro;
+
     $expediente = mysqli_real_escape_string($con, $_POST['expediente']);
     $fechaini = mysqli_real_escape_string($con, $_POST['fechaini']);
     $fechafz = mysqli_real_escape_string($con, $_POST['fechafz']);
@@ -87,7 +88,7 @@
         die('Error: ' . $stmt_casos->error);
         }
     } 
-    header('Location: index.php?mensaje='.urlencode("Cita programada correctamente y factura generada"));
+    header('Location: index.php?mensaje='.urlencode("caso programado correctamente"));
     exit();
     }
 
