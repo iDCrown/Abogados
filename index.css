@@ -11,6 +11,48 @@ body{
 .content {
     width: 75%;
 }
+.consultar{
+    margin-bottom: 27px;
+}
+
+.button{
+   
+    border: none;
+    border-radius: 6px;
+    width: 91px;
+    height: 30px;
+    font-family: serif;
+    font-variant-caps: all-petite-caps;
+    font-weight: 500;
+    font-size: 17px;
+}
+.p_crear{
+    font-size: 15px;
+    font-family: serif;
+
+}
+.forml1{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.text_descripcion{
+  background: #ffe1822b;
+  padding: 0.8em 2em;
+  border-radius: 11px;
+}
+caption {
+  padding-top: .5rem;
+  padding-bottom: 1.5rem;
+  color: var(--bs-secondary-color);
+  text-align: left;
+}
+.input{
+    border-radius: 8px;
+    border: 1.6px solid #dadada;
+    height: 30px;
+    margin-right: 10px;
+}
 .boton{
     display: flex;
     justify-content: flex-end;
@@ -21,6 +63,9 @@ body{
 }
 .tdd{
     padding: 1rem .5rem !important;
+}
+.modal-body{
+  padding: 2em 1em;
 }
 .abogado{
     display: flex;
@@ -115,5 +160,134 @@ body{
 	font-family: 'Lato';
 }
 a{
-    color: #f6bd00;
+  color: #f6bd00;
+}
+
+.tr-row{
+  font-size: smaller;
+}
+.th_color{
+  color: #575757 !important;
+  border: 1px solid #f1b613;
+  margin-bottom: 3em;
+  font-family: serif;
+  font-variant-caps: small-caps;
+}
+.consultar{
+  margin-bottom: 27px;
+}
+.button:hover{
+  background: #fcc106;
+  color: #0a0a0a;
+}
+.button{
+  background: #ffc107;
+  color: #000000;
+  border: none;
+  border-radius: 6px;
+  width: 91px;
+  height: 30px;
+  font-family: serif;
+  font-variant-caps: all-petite-caps;
+  font-weight: 500;
+  font-size: 17px;
+}
+.title{
+  margin-bottom: 2em;
+  display: block;
+  font-family: serif;
+  font-variant-caps: all-petite-caps;
+}
+.p_crear{
+  font-size: 15px;
+  font-family: serif;
+
+}
+.input{
+  border-radius: 8px;
+  border: 1.6px solid #dadada;
+  height: 30px;
+  margin-right: 10px;
+}
+.modal-content{
+  height: 79vh;
+}
+.modal-header{
+  justify-content: space-between;
+}
+.modalFactura-title {
+  margin-bottom: -6px;
+  font-size: 37px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-family: inherit;
+  font-variant-caps: all-petite-caps;
+}
+.casoFactura-title {
+  margin-bottom: 27px;
+  font-size: 27px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #ffc72d;
+  text-align: center;
+  font-family: inherit;
+  font-variant-caps: all-petite-caps;
+  margin-top: 0px;
+}
+.modalFactura-header{
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  margin-bottom: 1em;
+  padding: 1em;
+  color: #ffc72d;
+  justify-content: space-between;
+  border-bottom: var(--bs-modal-header-border-width) solid var(--bs-modal-header-border-color);
+}
+.tableFactura-header{
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding: 1em;
+  justify-content: space-between;
+}
+.fechaEmicion{
+  padding-left: 5px;
+  font-size: 15px;
+  color: black;
+  font-variant-caps: all-petite-caps;
+}
+.modal-content{
+  padding: 1em 1em;
+}
+.title_mascota{
+  font-size: 24px;
+  border-collapse: collapse;
+  font-weight: 900;
+  font-family: monospace;
+  font-variant-caps: all-petite-caps;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: monospace;
+  font-variant-caps: all-petite-caps;
+}
+
+.data-table th, .data-table td {
+  text-align: left;
+}
+
+.data-table th {
+  width: 62px;
+  font-size: 1em;
+}
+
+.data-table td {
+  font-size: 1em;
+}
+.data-table .facturaN {
+  width: 95px;
+  font-size: 1em;
 }

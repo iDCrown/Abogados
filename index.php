@@ -1,4 +1,5 @@
 <?php include 'conexion.php'; ?>
+<?php include 'verCaso.php';?>
 <?php
     //Crear y seleccionar query de clientes
     $query = "SELECT * FROM clientes ORDER BY cedula DESC";
@@ -7,7 +8,7 @@
     if(isset($_POST['borrar'])){        
       $idRegistro = $_POST['cedula'];
       //Validar si no están vacíos
-      $query = "DELETE FROM clientes where cedula='$idRegistro'";
+      $query = "DELETE FROM clientes WHERE cedula='$idRegistro'";
 
         if(!mysqli_query($con, $query)){
         
@@ -20,17 +21,17 @@
         }
     }
 
-    // Casos 
-    $query = "SELECT * FROM casos ORDER BY expediente DESC";
-    $casos = mysqli_query($con, $query);
 
     if(isset($_POST['borrarCaso'])){        
-
-      $idRCasos = $_POST['expediente'];
+      $idRegistro = $_POST['expediente'];
       //Validar si no están vacíos
-      $query = "DELETE FROM casos where expediente='$idRCasos'";
+      $query = "DELETE FROM casos WHERE expediente= ?";
 
-        if(!mysqli_query($con, $query)){
+      $stmt = $con->prepare($query);
+      $stmt->bind_param("i", $idRegistro);
+      $stmt->execute();
+      $result = $stmt->get_result();
+        if($result->num_rows>0){
         
           die('Error: ' . mysqli_error($con));
           $error = "Error, no se pudo crear el registros";
@@ -40,38 +41,59 @@
           exit();
         }
     }
+    // Abogados
+    $query = "SELECT * FROM abogado ORDER BY idAbogado DESC";
+    $abogados = mysqli_query($con, $query);
 
-    // ABOGADOS
-    if(isset($_POST['enviarAbogado'])){
-      $idAbogado = mysqli_real_escape_string($con, $_POST['idAbogado']);
-      $nombre = mysqli_real_escape_string($con, $_POST['nombre']);
-      $email = mysqli_real_escape_string($con, $_POST['email']);
-      $telefono = mysqli_real_escape_string($con, $_POST['telefono']);
-      $direccion = mysqli_real_escape_string($con, $_POST['direccion']);
-      $direccion = mysqli_real_escape_string($con, $_POST['direccion']);
+    if(isset($_POST['borrarAbogado'])){        
+    $idRegistro = $_POST['idAbogado'];
+    //Validar si no están vacíos
+    $query = "DELETE FROM abogado WHERE idAbogado='$idRegistro'";
 
-
-      //Configurar tiempo zona horaria
-      date_default_timezone_set('America/Bogota');
-      $time = date('h:i:s a', time());
-
-      //Validar si no están vacíos
-      if(!isset($idAbogado) || $idAbogado == '' || !isset($nombre) || $nombre == '' || !isset($telefono) || $telefono == '' || !isset($email) || $email == '' || !isset($direccion) || $direccion == ''){
-          $error = "Algunos campos están vacíos";
+    if(!mysqli_query($con, $query)){
+    
+      die('Error: ' . mysqli_error($con));
+      $error = "Error, no se pudo crear el registros";
       }else{
-          $query = "INSERT INTO abogados(idAbogado, nombre, email, telefono, direccion)VALUES('$idAbogado', '$nombre', '$email', '$telefono', '$direccion')";
-
-          if(!mysqli_query($con, $query)){
-              die('Error: ' . mysqli_error($con));
-              $error = "Error, no se pudo crear el registro";
-          }else{
-              $mensaje = "Registro creado correctamente";
-              header('Location: index.php?mensaje='.urlencode($mensaje));
-              exit();
-          }
+      $mensaje = "Registro borrado correctamente";
+      header('Location: index.php?mensaje='.urlencode($mensaje));
+      exit();
       }
+    }
 
-  }
+  
+
+  // HISTORIAL DE CASOS
+ // Casos
+$result = null;
+
+if (isset($_GET['cedula'])) {
+    $idCedula = $_GET['cedula'];
+
+    $query_historialCaso = "SELECT 
+    a.nombre AS nombreAbogado, 
+    cs.expediente, 
+    cs.fechaini, 
+    cs.tipoCaso, 
+    cs.estado 
+    FROM casos cs 
+    JOIN caso_abogado ca 
+    ON ca.expediente = cs.expediente 
+    JOIN abogado a 
+    ON ca.idAbogado = a.idAbogado 
+    JOIN clientes cl 
+    ON cs.cedula = cl.cedula 
+    WHERE cs.cedula = ?
+    GROUP BY cs.expediente, a.nombre, cs.tipoCaso, cs.estado ";
+    // Preparar la declaración
+    $stmt = $con->prepare($query_historialCaso);
+    // Vincular los parámetros
+    $stmt->bind_param('s', $idCedula); // 's' indica que el parámetro es de tipo string
+    // Ejecutar la declaración
+    $stmt->execute();
+    // Obtener los resultados
+    $result = $stmt->get_result();
+}
 
 ?>
 <!DOCTYPE html>
@@ -92,7 +114,7 @@
       <a class="nav-link"style="border: none; color: #ffc108; font-variant-caps: all-petite-caps; font-weight: 900; letter-spacing: 1px;" href="#" onclick="mostrarTabla('casos')">Historial de casos</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link"style="border: none; color: #ffc108; font-variant-caps: all-petite-caps; font-weight: 900; letter-spacing: 1px;" href="#" onclick="mostrarTabla('abogado')">Crear Abogado</a>
+      <a class="nav-link"style="border: none; color: #ffc108; font-variant-caps: all-petite-caps; font-weight: 900; letter-spacing: 1px;" href="#" onclick="mostrarTabla('abogado')">Abogados</a>
     </li>
   </ul>
   <div class="conteiner">
@@ -105,7 +127,6 @@
             <button type="button" class=" btn btn-outline-warning">Crear Cliente</button>
           </a>
         </div>
-
         <table class="table table-hover ">
           <thead class="table-warning table-bordered border-warning">
             <tr>
@@ -139,94 +160,205 @@
           </tbody>
         </table>
       </div>
-      <!-- tabla casos -->
-      <div id="casos" style="display:none;">
+       <!-- Abogado -->
+       <div id="abogado"  style="display: none;">
+        <!-- Boton Crear  -->
+        <div class="boton">
+          <a href="abogado.php" class=""> 
+            <button type="button" class=" btn btn-outline-warning">Crear Abogado</button>
+          </a>
+        </div>
+          <!-- tabla Abogados -->
         <table class="table table-hover ">
           <thead class="table-warning table-bordered border-warning">
             <tr>
-              <th scope="col">expediente</th>
-              <th scope="col">fechaini</th>
-              <th scope="col">fechafz</th>
-              <th scope="col">tipoCaso</th>
-              <th scope="col">estado</th>
+              <th scope="col">Cedula</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Correo</th>
+              <th scope="col">Telefono</th>
+              <th scope="col">Direccion</th>
+              <th scope="col">Salario</th>
               <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
-          <?php while ( $fila = mysqli_fetch_assoc($casos)) : ?>
-              <td scope="row"><?php echo $fila['expediente']; ?></td>
-              <td scope="row"><?php echo $fila['fechaini']; ?></td>
-              <td scope="row"><?php echo $fila['fechafz']; ?></td>
-              <td scope="row"><?php echo $fila['tipoCaso']; ?></td>
-              <td scope="row"><?php echo $fila['estado']; ?></td>
+          <?php while ( $fila = mysqli_fetch_assoc($abogados)) : ?>
+            <tr class="tr-row" style="font-size: smaller">
+              <td scope="row">
+                <?php echo $fila['idAbogado']; ?>
+              </td>
+              <td scope="row"><?php echo $fila['nombre']; ?></td>
+              <td scope="row"><?php echo $fila['email']; ?></td>
+              <td scope="row"><?php echo $fila['telefono']; ?></td>
+              <td scope="row"><?php echo $fila['direccion']; ?></td>
+              <td scope="row"><?php echo $fila['salario']; ?></td>
               <td scope="row">
               <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <input type="hidden" name="expediente" value="<?php echo $fila['expediente']; ?>">
-                <button type="submit" class="btn btn-warning w-100" name="borrarCaso">Borrar</button>
+                <input type="hidden" name="idAbogado" value="<?php echo $fila['idAbogado']; ?>">
+                <button type="submit" class="btn btn-warning w-100" name="borrarAbogado">Borrar</button>
               </form>
             </tr> 
             <?php endwhile; ?>
           </tbody>
         </table>
       </div>
+      <!-- tabla casos -->
+      <div id="casos" style="display:none;">
+          <form class="consultar" action="" method="GET">
+          <p  style="color:black" class="p_crear">Ingrese el ID del cliente</p>
+            <input class="input" type="text" name="cedula">
+            <button type="submit" class="button" name="consultar">buscar</button>
+          </form>
+          <table class="table table-hover ">
+            <thead class="table-warning table-bordered border-warning">
+              <tr>
+                <th scope="col">Expediente</th>
+                <th scope="col">Fecha de inicio</th>
+                <th scope="col">TipoCaso</th>
+                <th scope="col">Estado</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+            <?php if ($result): ?>
+              <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+                <tr class="tr-row" style="font-size: smaller">
+                  <td scope="row"><?php echo $row['expediente']; ?></td>
+                    <td scope="row"><?php echo $row['fechaini']; ?></td>
+                    <td scope="row"><?php echo $row['tipoCaso']; ?></td>
+                    <td scope="row"><?php echo $row['estado']; ?></td>
+                    <td scope="row">
+                    <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                      <div class="forml1">
+                        <button type="button" style="margin-right: 9px;" class="btnVer btn btn-warning w-100" data-expediente="<?php echo $row['expediente']; ?>" onclick="verCaso(this)" data-bs-toggle="modal" data-bs-target="#myModal">Ver</button>
 
-      <!-- Crear Abogado -->
-      <div style="display: flex; justify-content: center;">
-        <div class="abogado" id="abogado" style="display:none;">
-          <h2 class="h2_crear">Abogado</h2>
-          <p class="p_crear" >Ingrese la información del Abogado</p>
-          <div style="margin-top: 22px">  
-            <form class="conteiner-form" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-              <div class="forml1">
-                <div class="first mb-3">
-                  <label for="cedula" class="form-label">Cedula</label>
-                  <input type="number" class="for" name="idAbogado" id="exampleInputEmail1" aria-describedby="emailHelp">
-                </div>
-                <div class="first mb-3">
-                  <label for="nombre" class="form-label">Nombre Completo</label>
-                  <input type="text" class=" for" name="nombre" id="exampleInputPassword1">
-                </div>
+                        <input type="hidden" name="expediente" value="<?php echo $row['expediente']; ?>">
+                        <button type="submit" class="btn btn-warning w-100" name="borrarCaso">Borrar</button>
+                      </div>
+                    </form>
+                </tr> 
+              <?php endwhile; ?>
+              <?php else: ?>
+                <tr>
+                  <td colspan="5">No se encontraron registros.</td>
+                </tr>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>          
+     
+      <!-- Modal Abogado -->
+      <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modalFactura-header">
+              <div>
+                <p class="modalFactura-title" id="exampleModalLabel">Caso #<span id="expediente"></span></p>
               </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Correo Electronico</label>
-                <input type="email" class="for b1" name="email" id="exampleInputPassword1">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>  
+            <div class="tableFactura-header">
+              <div class="infoMascota">
+                <h2 class="title_mascota" id="nombre"></h2>
+                <table class="data-table">
+                  <tr>
+                    <th>cedula:</th><td id="cedula"></td>
+                  </tr>
+                  <tr>
+                    <th>telefono:</th><td id="telefono"></td>
+                  </tr>
+                  <tr>
+                    <th>email:</th><td id="email"></td>
+                  </tr>
+                </table>
               </div>
-              <div class="mb-3">
-                <label for="telefono" class="form-label">Numero Telefonico</label>
-                <input type="number" class="for b2" name="telefono" id="exampleInputPassword1">
+              <div class="column_Nfactura">
+                <table class="data-table">
+                  <tr>
+                    <th class="facturaN">Fecha inicio:</th><td id="fechaini"></td>
+                  </tr>
+                  <tr>
+                    <th class="facturaN">Fecha final:</th><td id="fechafz"></td>
+                  </tr>
+                </table>
               </div>
-                <div class="mb-3">
-                  <label for="direccion" class="form-label">Dirección</label>
-                  <input type="text" class="for b3" name="direccion" id="exampleInputPassword1">
-                </div>
-                
-              <button type="submit" class="btn-brown" name="enviarAbogado">Enviar</button>
-            </form>
+            </div>
+            <div class="modal-body">
+            <table class="table table-sm caption-top ">
+              <h2 class="casoFactura-title">Informacion del caso</h2>
+              <thead>
+                <tr>
+                  <th scope="col">Expediente</th>
+                  <th scope="col">Tipo de Caso</th>
+                  <th scope="col">Nombre del Abogado</th>
+                  <th scope="col">Estado</th>
+                </tr>
+              </thead>
+              <tbody class="table-group-divider">
+                <td id="expediente_ex"></td>
+                <td id="tipoCaso"></td>
+                <td id="nombreAbogado"></td>
+                <td id="estado"></td>
+              </tbody>
+            </table>
+              <p  style="margin-top: 32px;"><strong>Descripcion del caso:</strong></p>
+              <p class="text_descripcion" id="descripcion">Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo, amet.</p>
+            </div>
           </div>
         </div>
       </div>
     </div>  
   </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <script>
+    function verCaso(button) {
+      const expediente = button.getAttribute('data-expediente');
 
-<script>
-  function mostrarTabla(tabla) {
-    if (tabla === 'clientes') {
-      document.getElementById('clientes').style.display = 'block';
-      document.getElementById('casos').style.display = 'none';
-      document.getElementById('abogado').style.display = 'none';
-    } else if (tabla === 'casos') {
-      document.getElementById('clientes').style.display = 'none';
-      document.getElementById('casos').style.display = 'block';
-      document.getElementById('abogado').style.display = 'none';
-    } else if (tabla === 'abogado') {
-      document.getElementById('clientes').style.display = 'none';
-      document.getElementById('casos').style.display = 'none';
-      document.getElementById('abogado').style.display = 'block';
+      // Realizar una solicitud AJAX a verCasos.php
+      fetch('verCaso.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'expediente_ex=' + expediente
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          // Poblar el modal con los datos recibidos
+          document.getElementById('expediente').innerText = data.expediente;
+          document.getElementById('expediente_ex').innerText = data.expediente;
+          document.getElementById('tipoCaso').innerText = data.tipoCaso;
+          document.getElementById('fechaini').innerText = data.fechaini;
+          document.getElementById('fechafz').innerText = data.fechafz;
+          document.getElementById('nombre').innerText = data.nombre;
+          document.getElementById('nombreAbogado').innerText = data.nombreAbogado;
+          document.getElementById('email').innerText = data.email;
+          document.getElementById('telefono').innerText = data.telefono;
+          document.getElementById('estado').innerText = data.estado;
+          document.getElementById('descripcion').innerText = data.descripcion;
+          document.getElementById('cedula').innerText = data.cedula;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     }
-  }
-</script>
+  </script>
+
+  <script>
+    function mostrarTabla(tabla) {
+      const tablas = ['clientes', 'casos', 'abogado'];
+      tablas.forEach(t => {
+        document.getElementById(t).style.display = (t === tabla) ? 'block' : 'none';
+      });
+    }
+  </script>
 
 </body>
 </html>
