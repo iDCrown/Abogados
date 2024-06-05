@@ -11,6 +11,36 @@ body{
 .content {
     width: 75%;
 }
+.consultar{
+    margin-bottom: 27px;
+}
+.button:hover{
+    background: #a5e10d;
+    color: #e4ffa8;
+}
+.button{
+    background: #e4ffa8;
+    color: #a5e10d;
+    border: none;
+    border-radius: 6px;
+    width: 91px;
+    height: 30px;
+    font-family: serif;
+    font-variant-caps: all-petite-caps;
+    font-weight: 500;
+    font-size: 17px;
+}
+.p_crear{
+    font-size: 15px;
+    font-family: serif;
+
+}
+.input{
+    border-radius: 8px;
+    border: 1.6px solid #dadada;
+    height: 30px;
+    margin-right: 10px;
+}
 .boton{
     display: flex;
     justify-content: flex-end;

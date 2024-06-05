@@ -96,7 +96,7 @@
           </div>
         </div>
       </div>
-      
+      <!-- caso -->
       <div class="col background">
         <h2 class="h2_crear">Caso</h2>
         <p class="p_crear" >Ingrese la información del Caso</p>
@@ -107,6 +107,10 @@
               <div class="first mb-3">
                 <label for="expediente" class="form-label">Expediente</label>
                 <input type="number" class="for" name="expediente" id="exampleInputEmail1" aria-describedby="emailHelp" value="<?php echo $expediente; ?>">
+              </div>
+              <div class="first mb-3">
+                <label for="idAbogado" class="form-label">Abogado</label>
+                <input type="number" class="for" name="idAbogado" id="exampleInputEmail1" aria-describedby="emailHelp" value="<?php echo $idAbogado; ?>">
               </div>
             </div>
             <div class="forml1">
