@@ -7,7 +7,7 @@
     if(isset($_POST['borrar'])){        
       $idRegistro = $_POST['cedula'];
       //Validar si no están vacíos
-      $query = "DELETE FROM clientes where cedula='$idRegistro'";
+      $query = "DELETE FROM clientes WHERE cedula='$idRegistro'";
 
         if(!mysqli_query($con, $query)){
         
@@ -23,11 +23,15 @@
 
     if(isset($_POST['borrarCaso'])){        
 
-      $idRCasos = $_POST['expediente'];
+      $idRegistro = $_POST['expediente'];
       //Validar si no están vacíos
-      $query = "DELETE FROM casos where expediente='$idRCasos'";
+      $query = "DELETE FROM casos WHERE expediente= ?";
 
-        if(!mysqli_query($con, $query)){
+      $stmt = $con->prepare($query);
+      $stmt->bind_param("i", $idRegistro);
+      $stmt->execute();
+      $result = $stmt->get_result();
+        if($result->num_rows>0){
         
           die('Error: ' . mysqli_error($con));
           $error = "Error, no se pudo crear el registros";
@@ -41,20 +45,21 @@
     $query = "SELECT * FROM abogado ORDER BY idAbogado DESC";
     $abogados = mysqli_query($con, $query);
 
-    if(isset($_POST['borrar'])){        
-    $id = $_POST['idAbogado'];
+    if(isset($_POST['borrarAbogado'])){        
+    $idRegistro = $_POST['idAbogado'];
     //Validar si no están vacíos
-    $query = "DELETE FROM abogado where idAbogado='$id'";
+    $query = "DELETE FROM abogado WHERE idAbogado='$idRegistro'";
 
-          if(!mysqli_query($con, $query)){
-              die('Error: ' . mysqli_error($con));
-              $error = "Error, no se pudo crear el registro";
-          }else{
-              $mensaje = "Registro creado correctamente";
-              header('Location: index.php?mensaje='.urlencode($mensaje));
-              exit();
-          }
+    if(!mysqli_query($con, $query)){
+    
+      die('Error: ' . mysqli_error($con));
+      $error = "Error, no se pudo crear el registros";
+      }else{
+      $mensaje = "Registro borrado correctamente";
+      header('Location: index.php?mensaje='.urlencode($mensaje));
+      exit();
       }
+    }
 
   
 
@@ -74,7 +79,7 @@ if (isset($_GET['cedula'])) {
     FROM casos cs 
     JOIN caso_abogado ca 
     ON ca.expediente = cs.expediente 
-    JOIN abogados a 
+    JOIN abogado a 
     ON ca.idAbogado = a.idAbogado 
     JOIN clientes cl 
     ON cs.cedula = cl.cedula 
@@ -83,22 +88,15 @@ if (isset($_GET['cedula'])) {
     // Preparar la declaración
     $stmt = $con->prepare($query_historialCaso);
     // Vincular los parámetros
-    $stmt->bind_param('i', $idCedula); // 's' indica que el parámetro es de tipo string
+    $stmt->bind_param('s', $idCedula); // 's' indica que el parámetro es de tipo string
     // Ejecutar la declaración
     $stmt->execute();
     // Obtener los resultados
     $result = $stmt->get_result();
 }
 
-    if(!mysqli_query($con, $query)){
-    
-    die('Error: ' . mysqli_error($con));
-    $error = "Error, no se pudo crear el registros";
-    }else{
-    $mensaje = "Registro borrado correctamente";
-    header('Location: index.php?mensaje='.urlencode($mensaje));
-    exit();
-    }
+    /*
+    }*/
 
 ?>
 <!DOCTYPE html>
@@ -197,11 +195,11 @@ if (isset($_GET['cedula'])) {
                   <td scope="row"><?php echo $row['estado']; ?></td>
                   <td scope="row">
                   <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                    <input type="hidden" name="expediente" value="<?php echo $fila['expediente']; ?>">
+                    <input type="hidden" name="expediente" value="<?php echo $row['expediente']; ?>">
                     <button type="submit" class="btn btn-warning w-100" name="borrarCaso">Borrar</button>
 
-                    <input type="hidden" name="expediente" value="<?php echo $fila['expediente']; ?>">
-                    <button type="submit" class="btn btn-warning w-100" name="borrarCaso">er</button>
+                    <input type="hidden" name="expediente" value="<?php echo $row['expediente']; ?>">
+                    <button type="submit" class="btn btn-warning w-100" name="verCaso">ver</button>
                   </form>
               </tr> 
             <?php endwhile; ?>
@@ -249,7 +247,7 @@ if (isset($_GET['cedula'])) {
               <td scope="row">
               <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                 <input type="hidden" name="idAbogado" value="<?php echo $fila['idAbogado']; ?>">
-                <button type="submit" class="btn btn-warning w-100" name="borrar">Borrar</button>
+                <button type="submit" class="btn btn-warning w-100" name="borrarAbogado">Borrar</button>
               </form>
             </tr> 
             <?php endwhile; ?>
@@ -257,45 +255,7 @@ if (isset($_GET['cedula'])) {
         </table>
       </div>
 
-      <div id="abogado"  style="display: none;">
-      
-        <!-- Boton Crear  -->
-        <div class="boton">
-          <a href="abogado.php" class=""> 
-            <button type="button" class=" btn btn-outline-warning">Crear Abogado</button>
-          </a>
-        </div>
-          <!-- tabla Abogados -->
-        <table class="table table-hover ">
-          <thead class="table-warning table-bordered border-warning">
-            <tr>
-              <th scope="col">Cedula</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Correo</th>
-              <th scope="col">Telefono</th>
-              <th scope="col">Direccion</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-          <?php while ( $fila = mysqli_fetch_assoc($abogados)) : ?>
-            <tr class="tr-row" style="font-size: smaller">
-              <td scope="row">
-                <a href="">
-                  <?php echo $fila['idAbogado']; ?>
-                </a>
-              </td>
-              <td scope="row"><?php echo $fila['nombre']; ?></td>
-              <td scope="row"><?php echo $fila['email']; ?></td>
-              <td scope="row"><?php echo $fila['telefono']; ?></td>
-              <td scope="row"><?php echo $fila['direccion']; ?></td>
-              <td scope="row">
-              <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <input type="hidden" name="idAbogado" value="<?php echo $fila['idAbogado']; ?>">
-                <button type="submit" class="btn btn-warning w-100" name="borrar">Borrar</button>
-              </form>
-            </tr> 
-            <?php endwhile; ?>
+
           </tbody>
         </table>
       </div>
