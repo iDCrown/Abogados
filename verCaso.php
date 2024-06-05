@@ -12,6 +12,7 @@ if (isset($_POST['expediente_ex'])) {
         cs.fechaini, 
         cs.fechafz,
         cs.tipoCaso, 
+        cs.descripcion,
         cs.estado,
         cl.cedula,
         cl.nombre,
@@ -45,6 +46,7 @@ if (isset($_POST['expediente_ex'])) {
             'email' => $row['email'],
             'telefono' => $row['telefono'],
             'estado' => $row['estado'],
+            'descripcion' => $row['descripcion'],
             'cedula' => $row['cedula'],
         ];
 
